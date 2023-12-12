@@ -707,7 +707,7 @@ public:
 		if (input.length() != 6)
 			return false;
 
-		if (input[0] < 'A' || input[0] >= 'Z')
+		if (input[0] < 'A' || input[0] > 'Z')
 			return false;
 		return true;
 	}
@@ -1142,8 +1142,9 @@ int main() {
 									
 									S1->DisplayAllStudents();
 								}
-							
+								
 								if (selected == 1) {
+									bool valid = true;
 									int age;
 									string name, rollno, contact,temptext;
 									//cin.ignore();
@@ -1156,26 +1157,104 @@ int main() {
 									cout << "\nEnter age\n";
 									cin >> age;
 									cin.ignore();
-
+									
 									Student S5(name, rollno, age, contact);
+									while (1) {
 
+										for (int i = 0; i < name.length(); i++) {
+											if (!((name[i] >= 'a' && name[i] <= 'z') || (name[i] >= 'A' && name[i] <= 'Z'))) {
+												valid = false;
+												cout << "\nInvalid name. Please try again\n";
+												break;
+											}
 
-									bool flag = S1->addStudent(S5);
-									if (flag == true) {
-										cout << "\nDo you want to save data to file Y/N:\n";
-										char a;
-										cin >> a;
-										cin.ignore();
-										if (a == 'y' || a == 'Y') {
-											fileHandler f1("read", "student.txt", S5);
-											f1.writetofile();
-											cout << "\nData saved succesfully\n";
 										}
-										temptext = "Student added";
+										if (valid == false)
+											break;
+
+
+
+
+										if (name.length() <= 0 || name.length() >= 30) {
+											valid = false;
+											cout << "\nPlease enter a valid name\n";
+											break;
+
+										}
+
+
+										for (int i = 0; i < rollno.length(); i++) {
+											if ((rollno[i] >= 'a' && rollno[i] <= 'z' && i != 2) || (rollno[i] >= 'A' && rollno[i] <= 'Z' && i != 2)) {
+												valid = false;
+												cout << "\nRoll number should have alphabet at third place only i.e 22L-0000 try again\n";
+												break;
+											}
+										}
+										
+										if (valid == false)
+											break;
+
+										if (!((rollno[2] >= 'a' && rollno[2] <= 'z') || (rollno[2] >= 'A' && rollno[2] <= 'Z'))) {
+											valid = false;
+											cout << "\nRoll number 3rd place must have alphabet try again\n";
+											break;
+										}
+										break;
+
+										if (rollno[3] != '-') {
+											valid = false;
+											cout << "\nRoll number should have - at fourth place i.e 22L-0000 try again\n";
+											break;
+
+										}
+
+
+										if (rollno.length() != 8) {
+											valid = false;
+											cout << "\nRoll number length be 8 try again\n";
+											break;
+
+										}
+
+
+
+
+										
+
+
+										if (age <= 0 || age >= 30) {
+											valid = false;
+											
+											cout << "\nInvalid age \n";
+											break;
+										}
+
+
+										
 									}
-									else
-										temptext = "Error or Student already exist";
-									sf::RenderWindow addStdwindow(sf::VideoMode(800, 600), "add student window");
+									  
+										if (valid == true) {
+				
+											bool flag = S1->addStudent(S5);
+											if (flag == true) {
+												cout << "\nDo you want to save data to file Y/N:\n";
+												char a;
+												cin >> a;
+												cin.ignore();
+												if (a == 'y' || a == 'Y') {
+													fileHandler f1("read", "student.txt", S5);
+													f1.writetofile();
+													cout << "\nData saved succesfully\n";
+												}
+												temptext = "Student added";
+											}
+											else 
+												temptext = "Error or Student already exist";
+										}
+										else
+											temptext = "Error or Student already exist";
+										
+										sf::RenderWindow addStdwindow(sf::VideoMode(800, 600), "add student window");
 									
 									while (addStdwindow.isOpen()) {
 										Event addsEvent;
