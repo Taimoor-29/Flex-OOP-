@@ -1627,7 +1627,6 @@ int main() {
 		Menu.draw(Background);
 		mainmenu.draw(Menu);
 		Menu.display();
-		cout<<"hello"<<endl;
 	}
 }
 	
