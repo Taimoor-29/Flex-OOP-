@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include<fstream>
 #include"Mainmenu.h"
 #include"enroll.h"
 #include"regist.h"
@@ -661,6 +662,93 @@ public:
 		delete[]Attendance;*/
 	}
 };
+
+class Validator {
+private:
+	string input, type, constraints;
+public:
+	Validator() {
+		this->input = "";
+		this->type = "";
+		this->constraints = "";
+	}
+
+	Validator(string Input, string Type, string Const) {
+		this->input = Input;
+		this->type = Type;
+		this->constraints = Const;
+	}
+	bool checkrollno() {
+		 
+			for (int i = 0; i < input.length(); i++) {
+				if ((input[i] >= 'a' && input[i] <= 'z'&& i!=2)||(input[i] >= 'A' && input[i] <= 'Z' && i != 2)) {
+					return false;
+				}
+			}
+			
+		
+		
+			if (input[3] != '-')
+				return false;
+		
+		 	if (input.length() != 8)
+					return false;
+		
+		
+			if(input[2] < 'a' && input[2] > 'z' || input[2] < 'A' && input[2] > 'Z')
+				return false;
+		
+			return true;
+	}
+	bool checkcode() {
+		if (input[3] != '-')
+			return false;
+
+		if (input.length() != 6)
+			return false;
+
+		if (input[0] < 'A' || input[0] >= 'Z')
+			return false;
+		return true;
+	}
+};
+
+class fileHandler {
+private:
+	string mode, filename;
+	Student data;
+public:
+	fileHandler(string mode, string filename, Student data) {
+		this->mode = mode;
+		this->filename = filename;
+		this->data = data;
+	}
+	
+public:
+	void readfromfile() {
+		string myText;
+		ifstream fin;
+		fin.open(filename);
+		while (getline(fin, myText)) {
+			cout << "\nStudent Information is as follows:(Name-Rollno-Age-Contact)\n";
+			cout << myText;
+		}
+		
+	}
+	void writetofile() {
+		ofstream of;
+		of.open(filename, ios::app);
+		if (!of)
+			cout << "No such file found";
+		else {
+			of << data.getName()<<" " << data.getRollno()<<" " <<data.getAge()<<" "<<data.getContact()<<"\n";
+		}
+
+	}
+	void setData(Student S) {
+		this->data = S;
+	}
+};
 CourseCatalogue* CourseCatalogue::CC = nullptr;
 studentEnrollment* studentEnrollment::se = nullptr;
 
@@ -907,13 +995,22 @@ System* System::ins = nullptr;
 
 int main() {
 
-	// Main window
 	
+	//Validator v1("22L.6A22", "string", "check dash");
+	//cout<<v1.checkrollno();
 	System* S1 = System::getInstance();
 	Student s1("Ali", "20L-6564", 21, "0300");
 	Student s2("Ahmed", "21L-2333", 21, "0301");
 	Student s3("Hamza", "22L-6822", 22, "0302");
 	Student s4("Haris", "23L-1132", 22, "0302");
+	fileHandler f2("write","student.txt",s1);
+	f2.writetofile();
+	f2.setData(s2);
+	f2.writetofile();
+	f2.setData(s3);
+	f2.writetofile();
+	f2.setData(s4);
+	f2.writetofile();
 	Course C1("Cs-100", "PF", "Faraz", 3);
 	Course C2("Ds-100", "OOP", "Ahmad", 2);
 	Course C3("Cs-80", "English", "Babar", 1);
@@ -1062,9 +1159,20 @@ int main() {
 
 									Student S5(name, rollno, age, contact);
 
+
 									bool flag = S1->addStudent(S5);
-									if (flag == true)
+									if (flag == true) {
+										cout << "\nDo you want to save data to file Y/N:\n";
+										char a;
+										cin >> a;
+										cin.ignore();
+										if (a == 'y' || a == 'Y') {
+											fileHandler f1("read", "student.txt", S5);
+											f1.writetofile();
+											cout << "\nData saved succesfully\n";
+										}
 										temptext = "Student added";
+									}
 									else
 										temptext = "Error or Student already exist";
 									sf::RenderWindow addStdwindow(sf::VideoMode(800, 600), "add student window");
@@ -1086,7 +1194,7 @@ int main() {
 											sf::Text addStdText(temptext, font, 20);
 											addStdText.setPosition(30, 100);
 											addStdText.setFillColor(Color::Yellow);
-											addStdText.setCharacterSize(60);
+											addStdText.setCharacterSize(40);
 											addStdwindow.draw(addStdText);
 											addStdwindow.display();
 										
